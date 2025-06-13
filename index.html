@@ -83,30 +83,6 @@
 
       // Показываем загрузку
       document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
-      
-      function showTab(tab) {
-        // Снимаем классы и скрываем оба блока
-        document.getElementById("tabInfo").classList.remove("active");
-        document.getElementById("tabHistory").classList.remove("active");
-        document.getElementById("infoTab").style.display = "none";
-        document.getElementById("historyTab").style.display = "none";
-
-        if (tab === "info") {
-          document.getElementById("tabInfo").classList.add("active");
-          document.getElementById("infoTab").style.display = "block";
-        } else {
-          document.getElementById("tabHistory").classList.add("active");
-
-          // Показываем спиннер при первом открытии "Мої записи"
-          if (document.getElementById('historyTab').innerHTML.trim() === "") {
-            document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
-          }
-
-          document.getElementById("historyTab").style.display = "block";
-        }
-      }
-
-
 
       try {
         const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
@@ -163,19 +139,26 @@
     }
 
     function showTab(tab) {
-      document.getElementById("tabInfo").classList.remove("active");
-      document.getElementById("tabHistory").classList.remove("active");
-      document.getElementById("infoTab").style.display = "none";
-      document.getElementById("historyTab").style.display = "none";
+        // Снимаем классы и скрываем оба блока
+        document.getElementById("tabInfo").classList.remove("active");
+        document.getElementById("tabHistory").classList.remove("active");
+        document.getElementById("infoTab").style.display = "none";
+        document.getElementById("historyTab").style.display = "none";
 
-      if (tab === "info") {
-        document.getElementById("tabInfo").classList.add("active");
-        document.getElementById("infoTab").style.display = "block";
-      } else {
-        document.getElementById("tabHistory").classList.add("active");
-        document.getElementById("historyTab").style.display = "block";
+        if (tab === "info") {
+          document.getElementById("tabInfo").classList.add("active");
+          document.getElementById("infoTab").style.display = "block";
+        } else {
+          document.getElementById("tabHistory").classList.add("active");
+
+          // Показываем спиннер при первом открытии "Мої записи"
+          if (document.getElementById('historyTab').innerHTML.trim() === "") {
+            document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
+          }
+
+          document.getElementById("historyTab").style.display = "block";
+        }
       }
-    }
 
     function goBack() {
       document.getElementById('studentInput').style.display = 'block';

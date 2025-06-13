@@ -9,6 +9,7 @@
 <body>
   <div class="container">
     <h2>Персональний кабінет</h2>
+    <div id="backButton" onclick="goBack()">← Повернутись</div>
     <input type="text" id="studentInput" placeholder="Введіть ім’я…" autocomplete="off">
     <div id="suggestions"></div>
     <button class="action" onclick="loadDashboard()">Відкрити кабінет</button>
@@ -72,72 +73,78 @@
     }
 
     async function loadDashboard() {
-    const name = document.getElementById('studentInput').value.trim();
-    if (!name) return alert('Введіть ім’я');
+  const name = document.getElementById('studentInput').value.trim();
+  if (!name) return alert('Введіть ім’я');
 
-    const button = document.querySelector('.action');
-    button.classList.add('loading');
+  const button = document.querySelector('.action');
+  button.classList.add('loading');
 
-    document.getElementById('infoTab').innerHTML = '';
-    document.getElementById('historyTab').innerHTML = '';
-    document.getElementById('dashboard').style.display = 'block';
-    showTab('info');
+  // скрываем ввод и показываем стрелку
+  document.getElementById('studentInput').style.display = 'none';
+  button.style.display = 'none';
+  document.getElementById('backButton').style.display = 'block';
 
-    try {
-      const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
-      const data = await infoRes.json();
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('infoTab').innerHTML = '';
+  document.getElementById('historyTab').innerHTML = '';
+  showTab('info');
 
-      const now = new Date();
-      const formatted = now.toLocaleString('uk-UA', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
+  try {
+    const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
+    const data = await infoRes.json();
 
-      document.getElementById('infoTab').innerHTML =
-        `<b>Стан абонементу на ${formatted}</b><br><br>
-         <b>Ім’я:</b> ${data.name}<br>
-         <b>Групових тренувань:</b> ${data.groupTrainings}<br>
-         <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
-         <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
-         <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн`;
+    const now = new Date();
+    const formatted = now.toLocaleString('uk-UA', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
 
-      const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
-      const records = await scheduleRes.json();
+    document.getElementById('infoTab').innerHTML =
+      `<b>Стан абонементу на ${formatted}</b><br><br>
+       <b>Ім’я:</b> ${data.name}<br>
+       <b>Групових тренувань:</b> ${data.groupTrainings}<br>
+       <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
+       <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
+       <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн`;
 
-      const historyDiv = document.getElementById('historyTab');
-      historyDiv.innerHTML = '';
+    const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
+    const records = await scheduleRes.json();
 
-      if (records.future.length > 0) {
-        historyDiv.innerHTML += `<h3>Майбутні записи</h3>` +
-          records.future.map(r => `
-              <div class="session-card">
-                <div><b>Дата:</b> ${r.date}</div>
-                <div><b>Тип:</b> ${r.type}</div>
-                <div><b>Тренер:</b> ${r.coach}</div>
-                <div><b>Зал:</b> ${r.hall}</div>
-              </div>`).join('');
-      }
+    const historyDiv = document.getElementById('historyTab');
+    historyDiv.innerHTML = '';
 
-      if (records.past.length > 0) {
-        historyDiv.innerHTML += `<h3>Попередні записи</h3>` +
-          records.past.map(r => `
-              <div class="session-card">
-                <div><b>Дата:</b> ${r.date}</div>
-                <div><b>Тип:</b> ${r.type}</div>
-                <div><b>Тренер:</b> ${r.coach}</div>
-                <div><b>Зал:</b> ${r.hall}</div>
-              </div>`).join('');
-      }
-
-      if (records.future.length === 0 && records.past.length === 0) {
-        historyDiv.innerHTML = '<b>Занять не знайдено.</b>';
-      }
-    } catch (e) {
-      alert("Помилка при завантаженні");
-    } finally {
-      button.classList.remove('loading');
+    if (records.future.length > 0) {
+      historyDiv.innerHTML += `<h3>Майбутні записи</h3>` +
+        records.future.map(r => `
+            <div class="session-card">
+              <div><b>Дата:</b> ${r.date}</div>
+              <div><b>Тип:</b> ${r.type}</div>
+              <div><b>Тренер:</b> ${r.coach}</div>
+              <div><b>Зал:</b> ${r.hall}</div>
+            </div>`).join('');
     }
+
+    if (records.past.length > 0) {
+      historyDiv.innerHTML += `<h3>Попередні записи</h3>` +
+        records.past.map(r => `
+            <div class="session-card">
+              <div><b>Дата:</b> ${r.date}</div>
+              <div><b>Тип:</b> ${r.type}</div>
+              <div><b>Тренер:</b> ${r.coach}</div>
+              <div><b>Зал:</b> ${r.hall}</div>
+            </div>`).join('');
+    }
+
+    if (records.future.length === 0 && records.past.length === 0) {
+      historyDiv.innerHTML = '<b>Занять не знайдено.</b>';
+    }
+  } catch (e) {
+    alert("Помилка при завантаженні");
+  } finally {
+    button.classList.remove('loading');
   }
+}
+
 
     function showTab(tab) {
       document.getElementById("tabInfo").classList.remove("active");
@@ -153,6 +160,13 @@
         document.getElementById("historyTab").style.display = "block";
       }
     }
+    function goBack() {
+    document.getElementById('studentInput').style.display = 'block';
+    document.querySelector('.action').style.display = 'block';
+    document.getElementById('backButton').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+
   </script>
 </body>
 </html>

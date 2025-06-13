@@ -76,16 +76,13 @@
   const name = document.getElementById('studentInput').value.trim();
   if (!name) return alert('Введіть ім’я');
 
-  const button = document.querySelector('.action');
-  button.classList.add('loading');
-
-  // скрываем ввод и показываем стрелку
   document.getElementById('studentInput').style.display = 'none';
-  button.style.display = 'none';
+  document.querySelector('.action').style.display = 'none';
   document.getElementById('backButton').style.display = 'block';
-
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('infoTab').innerHTML = '';
+
+  // Показываем загрузку
+  document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
   document.getElementById('historyTab').innerHTML = '';
   showTab('info');
 
@@ -140,8 +137,6 @@
     }
   } catch (e) {
     alert("Помилка при завантаженні");
-  } finally {
-    button.classList.remove('loading');
   }
 }
 

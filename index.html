@@ -83,7 +83,9 @@
 
       // Показываем загрузку
       document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
+      
       function showTab(tab) {
+        // Снимаем классы и скрываем оба блока
         document.getElementById("tabInfo").classList.remove("active");
         document.getElementById("tabHistory").classList.remove("active");
         document.getElementById("infoTab").style.display = "none";
@@ -95,7 +97,7 @@
         } else {
           document.getElementById("tabHistory").classList.add("active");
 
-          // 👉 вот здесь — добавляем спиннер при первом показе
+          // Показываем спиннер при первом открытии "Мої записи"
           if (document.getElementById('historyTab').innerHTML.trim() === "") {
             document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
           }
@@ -103,6 +105,7 @@
           document.getElementById("historyTab").style.display = "block";
         }
       }
+
 
 
       try {

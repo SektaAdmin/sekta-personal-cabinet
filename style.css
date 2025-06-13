@@ -59,6 +59,10 @@ input[type="text"] {
   background-color: #f9f9f9;
 }
 
+#suggestions:empty {
+  display: none;
+}
+
 button.action {
   width: 100%;
   padding: 16px;

@@ -83,6 +83,7 @@
 
       // Показываем загрузку
       document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
+      showTab('info');
 
       try {
         const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));

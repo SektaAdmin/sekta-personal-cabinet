@@ -84,7 +84,27 @@
       // Показываем загрузку
       document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
       document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
-      showTab('info');
+      function showTab(tab) {
+        document.getElementById("tabInfo").classList.remove("active");
+        document.getElementById("tabHistory").classList.remove("active");
+        document.getElementById("infoTab").style.display = "none";
+        document.getElementById("historyTab").style.display = "none";
+
+        if (tab === "info") {
+          document.getElementById("tabInfo").classList.add("active");
+          document.getElementById("infoTab").style.display = "block";
+        } else {
+          document.getElementById("tabHistory").classList.add("active");
+
+          // 👉 вот здесь — добавляем спиннер при первом показе
+          if (document.getElementById('historyTab').innerHTML.trim() === "") {
+            document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
+          }
+
+          document.getElementById("historyTab").style.display = "block";
+        }
+      }
+
 
       try {
         const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));

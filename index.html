@@ -73,73 +73,72 @@
     }
 
     async function loadDashboard() {
-  const name = document.getElementById('studentInput').value.trim();
-  if (!name) return alert('Введіть ім’я');
+      const name = document.getElementById('studentInput').value.trim();
+      if (!name) return alert('Введіть ім’я');
 
-  document.getElementById('studentInput').style.display = 'none';
-  document.querySelector('.action').style.display = 'none';
-  document.getElementById('backButton').style.display = 'block';
-  document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('studentInput').style.display = 'none';
+      document.querySelector('.action').style.display = 'none';
+      document.getElementById('backButton').style.display = 'block';
+      document.getElementById('dashboard').style.display = 'block';
 
-  // Показываем загрузку
-  document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
-  document.getElementById('historyTab').innerHTML = '';
-  showTab('info');
+      // Показываем загрузку
+      document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
+      document.getElementById('historyTab').innerHTML = '';
+      showTab('info');
 
-  try {
-    const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
-    const data = await infoRes.json();
+      try {
+        const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
+        const data = await infoRes.json();
 
-    const now = new Date();
-    const formatted = now.toLocaleString('uk-UA', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
+        const now = new Date();
+        const formatted = now.toLocaleString('uk-UA', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
 
-    document.getElementById('infoTab').innerHTML =
-      `<b>Стан абонементу на ${formatted}</b><br><br>
-       <b>Ім’я:</b> ${data.name}<br>
-       <b>Групових тренувань:</b> ${data.groupTrainings}<br>
-       <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
-       <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
-       <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн`;
+        document.getElementById('infoTab').innerHTML =
+          `<b>Стан абонементу на ${formatted}</b><br><br>
+           <b>Ім’я:</b> ${data.name}<br>
+           <b>Групових тренувань:</b> ${data.groupTrainings}<br>
+           <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
+           <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
+           <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн`;
 
-    const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
-    const records = await scheduleRes.json();
+        const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
+        const records = await scheduleRes.json();
 
-    const historyDiv = document.getElementById('historyTab');
-    historyDiv.innerHTML = '';
+        const historyDiv = document.getElementById('historyTab');
+        historyDiv.innerHTML = '';
 
-    if (records.future.length > 0) {
-      historyDiv.innerHTML += `<h3>Майбутні записи</h3>` +
-        records.future.map(r => `
-            <div class="session-card">
-              <div><b>Дата:</b> ${r.date}</div>
-              <div><b>Тип:</b> ${r.type}</div>
-              <div><b>Тренер:</b> ${r.coach}</div>
-              <div><b>Зал:</b> ${r.hall}</div>
-            </div>`).join('');
+        if (records.future.length > 0) {
+          historyDiv.innerHTML += `<h3>Майбутні записи</h3>` +
+            records.future.map(r => `
+                <div class="session-card">
+                  <div><b>Дата:</b> ${r.date}</div>
+                  <div><b>Тип:</b> ${r.type}</div>
+                  <div><b>Тренер:</b> ${r.coach}</div>
+                  <div><b>Зал:</b> ${r.hall}</div>
+                </div>`).join('');
+        }
+
+        if (records.past.length > 0) {
+          historyDiv.innerHTML += `<h3>Попередні записи</h3>` +
+            records.past.map(r => `
+                <div class="session-card">
+                  <div><b>Дата:</b> ${r.date}</div>
+                  <div><b>Тип:</b> ${r.type}</div>
+                  <div><b>Тренер:</b> ${r.coach}</div>
+                  <div><b>Зал:</b> ${r.hall}</div>
+                </div>`).join('');
+        }
+
+        if (records.future.length === 0 && records.past.length === 0) {
+          historyDiv.innerHTML = '<b>Занять не знайдено.</b>';
+        }
+      } catch (e) {
+        alert("Помилка при завантаженні");
+      }
     }
-
-    if (records.past.length > 0) {
-      historyDiv.innerHTML += `<h3>Попередні записи</h3>` +
-        records.past.map(r => `
-            <div class="session-card">
-              <div><b>Дата:</b> ${r.date}</div>
-              <div><b>Тип:</b> ${r.type}</div>
-              <div><b>Тренер:</b> ${r.coach}</div>
-              <div><b>Зал:</b> ${r.hall}</div>
-            </div>`).join('');
-    }
-
-    if (records.future.length === 0 && records.past.length === 0) {
-      historyDiv.innerHTML = '<b>Занять не знайдено.</b>';
-    }
-  } catch (e) {
-    alert("Помилка при завантаженні");
-  }
-}
-
 
     function showTab(tab) {
       document.getElementById("tabInfo").classList.remove("active");
@@ -155,13 +154,13 @@
         document.getElementById("historyTab").style.display = "block";
       }
     }
-    function goBack() {
-    document.getElementById('studentInput').style.display = 'block';
-    document.querySelector('.action').style.display = 'block';
-    document.getElementById('backButton').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'none';
-  }
 
+    function goBack() {
+      document.getElementById('studentInput').style.display = 'block';
+      document.querySelector('.action').style.display = 'block';
+      document.getElementById('backButton').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+    }
   </script>
 </body>
 </html>

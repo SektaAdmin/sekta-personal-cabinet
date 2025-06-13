@@ -181,29 +181,6 @@
       document.getElementById('backButton').style.display = 'none';
       document.getElementById('dashboard').style.display = 'none';
     }
-    
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    document.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipeGesture();
-    });
-
-    function handleSwipeGesture() {
-      const diff = touchEndX - touchStartX;
-
-      if (diff > 50) {
-        const dashboardVisible = document.getElementById('dashboard').style.display !== 'none';
-        if (dashboardVisible) {
-          goBack();
-        }
-      }
-    }
   </script>
 </body>
 </html>

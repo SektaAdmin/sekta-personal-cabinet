@@ -72,16 +72,27 @@
     }
 
     async function loadDashboard() {
-      const name = document.getElementById('studentInput').value.trim();
-      if (!name) return alert('Введіть ім’я');
+    const name = document.getElementById('studentInput').value.trim();
+    if (!name) return alert('Введіть ім’я');
 
-      document.getElementById('dashboard').style.display = 'block';
-      showTab('info');
+    const button = document.querySelector('.action');
+    button.classList.add('loading');
 
+    document.getElementById('infoTab').innerHTML = '';
+    document.getElementById('historyTab').innerHTML = '';
+    document.getElementById('dashboard').style.display = 'block';
+    showTab('info');
+
+    try {
       const infoRes = await fetch(API_URL + "?action=info&name=" + encodeURIComponent(name));
       const data = await infoRes.json();
+
       const now = new Date();
-      const formatted = now.toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const formatted = now.toLocaleString('uk-UA', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+
       document.getElementById('infoTab').innerHTML =
         `<b>Стан абонементу на ${formatted}</b><br><br>
          <b>Ім’я:</b> ${data.name}<br>
@@ -92,6 +103,7 @@
 
       const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
       const records = await scheduleRes.json();
+
       const historyDiv = document.getElementById('historyTab');
       historyDiv.innerHTML = '';
 
@@ -120,7 +132,12 @@
       if (records.future.length === 0 && records.past.length === 0) {
         historyDiv.innerHTML = '<b>Занять не знайдено.</b>';
       }
+    } catch (e) {
+      alert("Помилка при завантаженні");
+    } finally {
+      button.classList.remove('loading');
     }
+  }
 
     function showTab(tab) {
       document.getElementById("tabInfo").classList.remove("active");

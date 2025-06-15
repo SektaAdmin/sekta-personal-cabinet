@@ -32,16 +32,24 @@
     }
 
     window.onload = () => {
-      loadNames();
-      const input = document.getElementById('studentInput');
-      input.addEventListener('input', onType);
-      input.addEventListener('focus', onFocus);
-      document.addEventListener('click', e => {
-        if (!e.target.closest('#studentInput') && !e.target.closest('#suggestions')) {
-          document.getElementById('suggestions').innerHTML = '';
-        }
-      });
-    };
+    loadNames();
+    const input = document.getElementById('studentInput');
+
+    // 🔹 Подставляем имя, если оно уже сохранено
+    const savedName = localStorage.getItem("savedStudentName");
+    if (savedName) {
+      input.value = savedName;
+    }
+
+    input.addEventListener('input', onType);
+    input.addEventListener('focus', onFocus);
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#studentInput') && !e.target.closest('#suggestions')) {
+        document.getElementById('suggestions').innerHTML = '';
+      }
+    });
+  };
+
 
     function onType(e) {
       const val = e.target.value.toLowerCase().trim();
@@ -74,6 +82,7 @@
 
     async function loadDashboard() {
       const name = document.getElementById('studentInput').value.trim();
+      localStorage.setItem("savedStudentName", name);
       if (!name) return alert('Введіть ім’я');
 
       document.getElementById('studentInput').style.display = 'none';

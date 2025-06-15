@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Персональний кабінет</title>
-  <link rel="stylesheet" href="style-colored.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
@@ -81,6 +81,7 @@
       document.getElementById('backButton').style.display = 'block';
       document.getElementById('dashboard').style.display = 'block';
 
+      // Показываем загрузку
       document.getElementById('infoTab').innerHTML = '<div class="loader"></div>';
       document.getElementById('historyTab').style.display = 'none';
       showTab('info');
@@ -96,14 +97,12 @@
         });
 
         document.getElementById('infoTab').innerHTML =
-          `<div class="session-card">
-             <b>Стан абонементу на ${formatted}</b><br><br>
-             <b>Ім’я:</b> ${data.name}<br>
-             <b>Групових тренувань:</b> ${data.groupTrainings}<br>
-             <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
-             <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
-             <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн
-           </div>`;
+          `<b>Стан абонементу на ${formatted}</b><br><br>
+           <b>Ім’я:</b> ${data.name}<br>
+           <b>Групових тренувань:</b> ${data.groupTrainings}<br>
+           <b>Індивідуальних тренувань:</b> ${data.individualTrainings}<br>
+           <b>Оренда малого залу:</b> ${data.smallHallRent}<br>
+           <b>Депозит:</b> ${Number(data.deposit).toLocaleString('uk-UA')} грн`;
 
         const scheduleRes = await fetch(API_URL + "?action=schedule&name=" + encodeURIComponent(name));
         const records = await scheduleRes.json();
@@ -142,24 +141,26 @@
     }
 
     function showTab(tab) {
-      document.getElementById("tabInfo").classList.remove("active");
-      document.getElementById("tabHistory").classList.remove("active");
-      document.getElementById("infoTab").style.display = "none";
-      document.getElementById("historyTab").style.display = "none";
+        // Снимаем классы и скрываем оба блока
+        document.getElementById("tabInfo").classList.remove("active");
+        document.getElementById("tabHistory").classList.remove("active");
+        document.getElementById("infoTab").style.display = "none";
+        document.getElementById("historyTab").style.display = "none";
 
-      if (tab === "info") {
-        document.getElementById("tabInfo").classList.add("active");
-        document.getElementById("infoTab").style.display = "block";
-      } else {
-        document.getElementById("tabHistory").classList.add("active");
+        if (tab === "info") {
+          document.getElementById("tabInfo").classList.add("active");
+          document.getElementById("infoTab").style.display = "block";
+        } else {
+          document.getElementById("tabHistory").classList.add("active");
 
-        if (document.getElementById('historyTab').innerHTML.trim() === "") {
-          document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
+          // Показываем спиннер при первом открытии "Мої записи"
+          if (document.getElementById('historyTab').innerHTML.trim() === "") {
+            document.getElementById('historyTab').innerHTML = '<div class="loader"></div>';
+          }
+
+          document.getElementById("historyTab").style.display = "block";
         }
-
-        document.getElementById("historyTab").style.display = "block";
       }
-    }
 
     function goBack() {
       document.getElementById('studentInput').style.display = 'block';
